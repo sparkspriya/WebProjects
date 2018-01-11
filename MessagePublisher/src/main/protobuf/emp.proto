@@ -1,0 +1,9 @@
+syntax = "proto2";
+
+option java_package = "com.spark.netty";
+option java_outer_classname = "Employee";
+
+message EmployeeInfo {
+  required string name = 1;
+  required string dept = 2;
+}

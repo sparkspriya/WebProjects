@@ -3,6 +3,8 @@ package com.spark.netty;
 import java.util.List;
 import java.util.Map;
 
+import com.spark.netty.Employee.EmployeeInfo;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
@@ -27,6 +29,12 @@ public class MessageHandler extends SimpleChannelInboundHandler<FullHttpRequest>
 		String empName=queryParams.get("name").get(0);
 		String dept=queryParams.get("dept").get(0);
 		System.out.println(empName+" "+dept);
+		
+		EmployeeInfo.Builder employee=EmployeeInfo.newBuilder();
+		employee.setName(empName);
+		employee.setDept(dept);
+		
+		System.out.println("Employee object constructed:"+employee);
 		
 		ByteBuf content = Unpooled.copiedBuffer("Hello World.", CharsetUtil.UTF_8);
 		FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, content);

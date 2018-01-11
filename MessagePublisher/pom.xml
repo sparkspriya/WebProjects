@@ -21,6 +21,12 @@
     <artifactId>netty-all</artifactId>
     <version>4.0.25.Final</version>
 </dependency>
+  <!-- https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java -->
+<dependency>
+    <groupId>com.google.protobuf</groupId>
+    <artifactId>protobuf-java</artifactId>
+    <version>3.5.1</version>
+</dependency>
   
     <dependency>
       <groupId>junit</groupId>
@@ -29,4 +35,21 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  <build>
+  <plugins>
+  <plugin>
+	<groupId>com.github.os72</groupId>
+	<artifactId>protoc-jar-maven-plugin</artifactId>
+	<version>3.5.0</version>
+	<executions>
+		<execution>
+			<phase>generate-sources</phase>
+			<goals>
+				<goal>run</goal>
+			</goals>
+		</execution>
+	</executions>
+</plugin>
+</plugins>
+  </build>
 </project>
