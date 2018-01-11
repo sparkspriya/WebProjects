@@ -42,5 +42,8 @@ public class MessageHandler extends SimpleChannelInboundHandler<FullHttpRequest>
         response.headers().set(HttpHeaders.Names.CONTENT_LENGTH, content.readableBytes());
         ctx.write(response);
 	}
-
+	@Override
+    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+        ctx.flush();
+    }
 }
