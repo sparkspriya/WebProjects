@@ -10,7 +10,8 @@ public class ServerChannelInitializer extends ChannelInitializer<Channel> {
 	@Override
 	protected void initChannel(Channel channel) throws Exception {
 		ChannelPipeline pipeline=channel.pipeline();
-		pipeline.addLast(new HttpServerCodec());
+		pipeline.addLast(new HttpServerCodec()); 
+		pipeline.addLast(new HttpObjectAggregator(Short.MAX_VALUE));
 		pipeline.addLast(new MessageHandler());
 		
 	}
