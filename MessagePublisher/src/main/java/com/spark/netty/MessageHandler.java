@@ -3,6 +3,7 @@ package com.spark.netty;
 import java.util.List;
 import java.util.Map;
 
+import com.spark.kafka.KafkaMessagePublisher;
 import com.spark.netty.Employee.EmployeeInfo;
 
 import io.netty.buffer.ByteBuf;
@@ -19,7 +20,10 @@ import io.netty.handler.codec.http.QueryStringDecoder;
 import io.netty.util.CharsetUtil;
 
 public class MessageHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
-
+	KafkaMessagePublisher publisher;
+	public MessageHandler() {
+		publisher=new KafkaMessagePublisher();
+	}
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest httpRequest) throws Exception {
 		System.out.println(httpRequest.getUri());
@@ -35,6 +39,8 @@ public class MessageHandler extends SimpleChannelInboundHandler<FullHttpRequest>
 		employee.setDept(dept);
 		
 		System.out.println("Employee object constructed:"+employee);
+		
+		publisher.publishMessage(employee.build().toString());
 		
 		ByteBuf content = Unpooled.copiedBuffer("Hello World.", CharsetUtil.UTF_8);
 		FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, content);
