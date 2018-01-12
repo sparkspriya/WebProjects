@@ -3,6 +3,7 @@ package com.spark.netty;
 import java.util.List;
 import java.util.Map;
 
+import com.spark.constants.AppConstants;
 import com.spark.kafka.KafkaMessagePublisher;
 import com.spark.netty.Employee.EmployeeInfo;
 
@@ -30,8 +31,8 @@ public class MessageHandler extends SimpleChannelInboundHandler<FullHttpRequest>
 		QueryStringDecoder queryParamDecoder=new QueryStringDecoder(httpRequest.getUri());
 		Map<String, List<String>>queryParams=queryParamDecoder.parameters();
 		
-		String empName=queryParams.get("name").get(0);
-		String dept=queryParams.get("dept").get(0);
+		String empName=queryParams.get(AppConstants.EMP_NAME).get(0);
+		String dept=queryParams.get(AppConstants.EMP_DEPT).get(0);
 		System.out.println(empName+" "+dept);
 		
 		EmployeeInfo.Builder employee=EmployeeInfo.newBuilder();
@@ -39,10 +40,10 @@ public class MessageHandler extends SimpleChannelInboundHandler<FullHttpRequest>
 		employee.setDept(dept);
 		
 		System.out.println("Employee object constructed:"+employee);
-		
+		System.out.println("Going to publish the message");
 		publisher.publishMessage(employee.build().toString());
 		
-		ByteBuf content = Unpooled.copiedBuffer("Hello World.", CharsetUtil.UTF_8);
+		ByteBuf content = Unpooled.copiedBuffer("Published Successfully.", CharsetUtil.UTF_8);
 		FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, content);
         response.headers().set(HttpHeaders.Names.CONTENT_TYPE, "text/plain");
         response.headers().set(HttpHeaders.Names.CONTENT_LENGTH, content.readableBytes());

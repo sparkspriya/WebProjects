@@ -7,6 +7,8 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
+import com.spark.constants.AppConstants;
+
 public class KafkaMessagePublisher {
 	Producer<String,String> producer;
 public KafkaMessagePublisher() {
@@ -20,7 +22,8 @@ public KafkaMessagePublisher() {
 }
 
 public void publishMessage(String msg) {
-	producer.send(new ProducerRecord<String, String>("test",msg));
+	producer.send(new ProducerRecord<String, String>(AppConstants.TOPIC,msg));
+	System.out.println("Published.");
 	producer.close();
 }
 }
