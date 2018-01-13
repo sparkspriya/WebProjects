@@ -27,28 +27,54 @@ public class MessageHandler extends SimpleChannelInboundHandler<FullHttpRequest>
 	}
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest httpRequest) throws Exception {
+		String responseMsg="";
 		System.out.println(httpRequest.getUri());
 		QueryStringDecoder queryParamDecoder=new QueryStringDecoder(httpRequest.getUri());
 		Map<String, List<String>>queryParams=queryParamDecoder.parameters();
+		System.out.println(queryParams);
+		//Query params check
+		if(queryParams.isEmpty()) {
+			responseMsg="No query params passed to publish the message.";
+			System.out.println(responseMsg);
+			sendResponse(ctx,responseMsg);
+			return;
+		}
 		
-		String empName=queryParams.get(AppConstants.EMP_NAME).get(0);
-		String dept=queryParams.get(AppConstants.EMP_DEPT).get(0);
-		System.out.println(empName+" "+dept);
+		String empName="",dept="";
 		
+		//Constructing a Protobuff
 		EmployeeInfo.Builder employee=EmployeeInfo.newBuilder();
-		employee.setName(empName);
-		employee.setDept(dept);
-		
+		if(queryParams.containsKey(AppConstants.EMP_NAME)) {
+			empName=queryParams.get(AppConstants.EMP_NAME).get(0);
+			employee.setName(empName);
+		}else if(queryParams.containsKey(AppConstants.EMP_DEPT)) {
+			dept=queryParams.get(AppConstants.EMP_DEPT).get(0);
+			employee.setDept(dept);
+		}else {
+			responseMsg="Please pass atleast any of the query params 'name' or 'dept'";
+			sendResponse(ctx,responseMsg);
+			System.out.println("Not processing as there is no expected query params");
+			return;
+		}
+		System.out.println(empName+" "+dept);		
 		System.out.println("Employee object constructed:"+employee);
 		System.out.println("Going to publish the message");
-		publisher.publishMessage(employee.build().toString());
 		
-		ByteBuf content = Unpooled.copiedBuffer("Published Successfully.", CharsetUtil.UTF_8);
+		//Publishing the message to Kafka queue
+		publisher.publishMessage(employee.build().toString());
+		responseMsg="Published successfully.";
+		sendResponse(ctx,responseMsg);
+		
+	}
+	
+	private void sendResponse(ChannelHandlerContext ctx,String responseMsg) {
+		ByteBuf content = Unpooled.copiedBuffer(responseMsg, CharsetUtil.UTF_8);
 		FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, content);
         response.headers().set(HttpHeaders.Names.CONTENT_TYPE, "text/plain");
         response.headers().set(HttpHeaders.Names.CONTENT_LENGTH, content.readableBytes());
         ctx.write(response);
 	}
+	
 	@Override
     public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
         ctx.flush();
