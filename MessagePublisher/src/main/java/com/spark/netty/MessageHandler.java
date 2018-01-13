@@ -44,14 +44,14 @@ public class MessageHandler extends SimpleChannelInboundHandler<FullHttpRequest>
 		
 		//Constructing a Protobuff
 		EmployeeInfo.Builder employee=EmployeeInfo.newBuilder();
-		if(queryParams.containsKey(AppConstants.EMP_NAME)) {
+		if(queryParams.containsKey(AppConstants.EMP_NAME) && (queryParams.containsKey(AppConstants.EMP_DEPT))) {
 			empName=queryParams.get(AppConstants.EMP_NAME).get(0);
 			employee.setName(empName);
-		}else if(queryParams.containsKey(AppConstants.EMP_DEPT)) {
+		
 			dept=queryParams.get(AppConstants.EMP_DEPT).get(0);
 			employee.setDept(dept);
 		}else {
-			responseMsg="Please pass atleast any of the query params 'name' or 'dept'";
+			responseMsg="Please pass the query params 'name' and 'dept'";
 			sendResponse(ctx,responseMsg);
 			System.out.println("Not processing as there is no expected query params");
 			return;
