@@ -24,6 +24,6 @@ public KafkaMessagePublisher() {
 public void publishMessage(String msg) {
 	producer.send(new ProducerRecord<String, String>(AppConstants.TOPIC,msg));
 	System.out.println("Published.");
-	producer.close();
+	//producer.close();
 }
 }
